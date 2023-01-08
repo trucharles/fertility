@@ -95,19 +95,6 @@ conduct_nma_cont <- function(url, sheets){
   }
 }
 
-# set url
-
-url_sperm <- "https://docs.google.com/spreadsheets/d/1TriGg9Dn56UVxYvukL0sc1m93yXR_HSKYGxEzs5Hx_E/edit?pli=1#gid=0"
-
-# read sheets
-
-sheets_sperm <- c("Sperm count",
-            "Sperm motility",
-            "Sperm morphology",
-            "Semen volume")
-
-conduct_nma_cont(url_sperm, sheets_sperm)
-
 conduct_nma_disc <- function(url, sheets){
   wd <- getwd()
   # create and send to pdf observations, contrast-based formatted data,
@@ -128,7 +115,7 @@ conduct_nma_disc <- function(url, sheets){
                    data = obs, studlab = study_id)
     # conduct network meta-analysis
     nma <- netmetabin(pw, reference="plac",
-                   cc.pooled=TRUE)
+                      cc.pooled=TRUE)
 
     # create network graph
     fig_to_pdf(sheets[i], "network graph",
@@ -138,7 +125,7 @@ conduct_nma_disc <- function(url, sheets){
     fig_to_pdf(sheets[i], "forest plot",
                forest(nma, sortvar="Pscore",
                       xlab = sheets[i],
-                      rightcols = c("effect", "ci", "Pscore")), 11, 8)
+                      rightcols = c("effect", "ci")), 11, 8)
     # Create league tables
     netleague(nma, digits = 2, bracket = "(",
               separator = " to ", writexl = TRUE,
@@ -147,3 +134,22 @@ conduct_nma_disc <- function(url, sheets){
     setwd(wd)
   }
 }
+# set url
+
+url <- "https://docs.google.com/spreadsheets/d/1TriGg9Dn56UVxYvukL0sc1m93yXR_HSKYGxEzs5Hx_E/edit?pli=1#gid=0"
+
+# set names of sheets in url for continuous outcomes
+
+sheets_cont <- c("Sperm count",
+            "Sperm motility",
+            "Sperm morphology",
+            "Semen volume")
+
+conduct_nma_cont(url, sheets_cont)
+
+# set names of sheets in url for dichotomous outcomes
+
+sheets_disc <- c("Pregnancy live birth",
+                 "pregnancy correlations")
+
+conduct_nma_disc(url, sheets_disc)
