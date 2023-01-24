@@ -82,7 +82,7 @@ conduct_nma_cont <- function(url, sheets){
     # Check local inconsistency
     print(netsplit(nma))
     # Create heat plots
-    fig_to_pdf(sheets[i], "heat plot", netheat(nma, random=TRUE),10,8)
+    fig_to_pdf(sheets[i], "heat plot", netheat(nma, random=F),12,8)
     # Create league tables
     netleague(nma, common = TRUE, digits = 2, bracket = "(",
               separator = " to ", writexl = TRUE,
@@ -111,11 +111,11 @@ conduct_nma_disc <- function(url, sheets){
     # convert to contrast-based formatted data
     pw <- pairwise(grouped_intervention,
                    event = event,
-                   n = n_total, sm = "OR",
+                   n = n_total,
                    data = obs, studlab = study_id)
     # conduct network meta-analysis
-    nma <- netmetabin(pw, reference="plac",
-                      cc.pooled=TRUE)
+    nma <- netmetabin(pw, reference="plac", method="Inverse",
+                      cc.pooled=TRUE, common=FALSE)
 
     # create network graph
     fig_to_pdf(sheets[i], "network graph",
@@ -123,13 +123,52 @@ conduct_nma_disc <- function(url, sheets){
                         thickness="number.of.studies"), 8,8)
     # create forest plot
     fig_to_pdf(sheets[i], "forest plot",
-               forest(nma, sortvar="Pscore",
+               forest(nma, sortvar="SUCRA",
                       xlab = sheets[i],
                       rightcols = c("effect", "ci")), 11, 8)
+
+    # SUCRA rankings
+    print(netrank(nma, method="SUCRA", small.values="bad",
+                  random = TRUE, common = TRUE))
+
+    # SUCRA rankogram
+    rog <- rankogram(nma,
+                     small.values="bad",
+                     random=TRUE)$cumrank.matrix.random
+    # Combine SUCRA curves into one figure
+    fig_to_pdf(sheets[i], "SUCRA plot",
+               matplot(t(rog), xlab="Rank", ylab="Probability of Rank",
+                       type="l",lty=ceiling(seq_len(length(nma$trts)) / 8),
+                       col=seq_len(length(nma$trts))), 10, 10)
+    # Manually create SUCRA plot legend
+    pdf(paste(sheets[i], "SUCRA legend DRUGS.pdf"), width = 5, height = 9)
+    plot(c(0,1),type="n", axes=F, xlab="", ylab="")
+    legend("center", nma$trts,cex=0.8,
+           lty=ceiling(seq_len(length(nma$trts)) / 8),
+           col=seq_len(length(nma$trts)))
+    dev.off()
+    # Create funnel plots
+    fig_to_pdf(sheets[i], "funnel plot",
+               funnel(nma, pch = 1,
+                      method.bias = "Egger",
+                      legend = FALSE,
+                      order=names(sort(nma$k.trts[nma$k.trts>1]))),6,8)
+    # Check global inconsistency
+    print(decomp.design(nma))
+    # Check local inconsistency
+    print(netsplit(nma))
+    # Create heat plots
+    fig_to_pdf(sheets[i], "heat plot", netheat(nma, random=F),12,8)
+
+
     # Create league tables
-    netleague(nma, digits = 2, bracket = "(",
+    netleague(nma, common = TRUE, digits = 2, bracket = "(",
               separator = " to ", writexl = TRUE,
-              path=paste(sheets[i],"league table DRUGS.xlsx"))
+              path=paste(sheets[i],"league table FE DRUGS.xlsx"))
+    netleague(nma, common = FALSE, digits = 2, bracket = "(",
+              separator = " to ", writexl = TRUE,
+              path=paste(sheets[i],"league table RE DRUGS.xlsx"))
+
     # go back to original directory
     setwd(wd)
   }
@@ -149,7 +188,6 @@ conduct_nma_cont(url, sheets_cont)
 
 # set names of sheets in url for dichotomous outcomes
 
-sheets_disc <- c("Pregnancy live birth",
-                 "pregnancy correlations")
+sheets_disc <- c("Pregnancy")
 
 conduct_nma_disc(url, sheets_disc)
