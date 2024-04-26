@@ -1,4 +1,3 @@
-```
 # Network Meta-Analysis with netmeta for Fertility Outcomes
 
 This application allows you to conduct a network meta-analysis on fertility outcomes using data from Google Sheets. The analysis results are displayed as PDF files and can also be downloaded as Excel files.
