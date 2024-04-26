@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Shiny App",
+            "type": "R-Debugger",
+            "request": "launch",
+            "file": "${workspaceFolder}/app.R",
+            "debugMode": "file"
+        }
+    ]
+}

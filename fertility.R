@@ -173,21 +173,3 @@ conduct_nma_disc <- function(url, sheets){
     setwd(wd)
   }
 }
-# set url
-
-url <- "https://docs.google.com/spreadsheets/d/1TriGg9Dn56UVxYvukL0sc1m93yXR_HSKYGxEzs5Hx_E/edit?pli=1#gid=0"
-
-# set names of sheets in url for continuous outcomes
-
-sheets_cont <- c("Sperm count",
-            "Sperm motility",
-            "Sperm morphology",
-            "Semen volume")
-
-conduct_nma_cont(url, sheets_cont)
-
-# set names of sheets in url for dichotomous outcomes
-
-sheets_disc <- c("Pregnancy")
-
-conduct_nma_disc(url, sheets_disc)
