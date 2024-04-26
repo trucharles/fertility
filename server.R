@@ -8,7 +8,7 @@ shinyServer(function(input, output) {
     authenticated <- reactiveVal(FALSE)
 
     observeEvent(input$auth, {
-        googlesheets4::gs4_auth(cache = ".gstoken", email = "cdb2169@columbia.edu")
+        googlesheets4::gs4_auth()
         authenticated(TRUE)
     })
 

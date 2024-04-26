@@ -3,7 +3,9 @@ shinyUI(fluidPage(
     sidebarLayout(
         sidebarPanel(
             actionButton("auth", "Authenticate"),
-            conditionalPanel(condition = "output.authenticated", textInput("gid", "Google Sheets URL")),
+            conditionalPanel(condition = "output.authenticated",
+                            textInput("gid", "Google Sheets URL",
+                            value = "1TriGg9Dn56UVxYvukL0sc1m93yXR_HSKYGxEzs5Hx_E")),
             uiOutput("sheet_selector"),
             actionButton("run_cont", "Run Continuous Analysis"),
             actionButton("run_disc", "Run Dichotomous Analysis")
